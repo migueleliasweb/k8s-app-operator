@@ -1,0 +1,6 @@
+domain: migueleliasweb.github.io
+layout:
+- go.kubebuilder.io/v3
+projectName: k8s-app-operator
+repo: migueleliasweb.github.io
+version: "3"
