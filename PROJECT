@@ -3,4 +3,14 @@ layout:
 - go.kubebuilder.io/v3
 projectName: k8s-app-operator
 repo: migueleliasweb.github.io
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: migueleliasweb.github.io
+  group: appgroup
+  kind: App
+  path: migueleliasweb.github.io/api/v1beta1
+  version: v1beta1
 version: "3"
