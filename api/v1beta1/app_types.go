@@ -10,11 +10,9 @@ import (
 
 // AppSpec defines the desired state of App
 type AppSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-	Base     BaseSpec
-	Capacity CapacitySpec
-	Identity IdentitySpec
+	Base     BaseSpec     `json:"base,omitempty"`
+	Capacity CapacitySpec `json:"capacity,omitempty"`
+	Identity IdentitySpec `json:"identity,omitempty"`
 }
 
 // AppStatus defines the observed state of App

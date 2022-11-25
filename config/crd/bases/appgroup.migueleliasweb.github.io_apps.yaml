@@ -35,10 +35,45 @@ spec:
           spec:
             description: AppSpec defines the desired state of App
             properties:
-              foo:
-                description: Foo is an example field of App. Edit app_types.go to
-                  remove/update
-                type: string
+              base:
+                properties:
+                  env_vars:
+                    additionalProperties:
+                      type: string
+                    type: object
+                  image:
+                    type: string
+                  name:
+                    type: string
+                type: object
+              capacity:
+                properties:
+                  autoscale:
+                    properties:
+                      enabled:
+                        type: boolean
+                      max_replicas:
+                        type: integer
+                      target_cpu_utilization_percentage:
+                        type: integer
+                      target_memory_utilization_percentage:
+                        type: integer
+                    type: object
+                  evictionmaxunavailable:
+                    type: string
+                  replicas:
+                    type: integer
+                  rolloutmaxunavailable:
+                    type: string
+                type: object
+              identity:
+                properties:
+                  aws:
+                    properties:
+                      iam_role:
+                        type: string
+                    type: object
+                type: object
             type: object
           status:
             description: AppStatus defines the observed state of App
