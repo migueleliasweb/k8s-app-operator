@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.9.2
   creationTimestamp: null
-  name: apps.appgroup.migueleliasweb.github.io
+  name: apps.platform.migueleliasweb.github.io
 spec:
-  group: appgroup.migueleliasweb.github.io
+  group: platform.migueleliasweb.github.io
   names:
     kind: App
     listKind: AppList

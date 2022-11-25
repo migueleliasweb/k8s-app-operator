@@ -1,4 +1,4 @@
-apiVersion: appgroup.migueleliasweb.github.io/v1beta1
+apiVersion: platform.migueleliasweb.github.io/v1beta1
 kind: App
 metadata:
   labels:

@@ -12,7 +12,7 @@ metadata:
   name: app-editor-role
 rules:
 - apiGroups:
-  - appgroup.migueleliasweb.github.io
+  - platform.migueleliasweb.github.io
   resources:
   - apps
   verbs:
@@ -24,7 +24,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - appgroup.migueleliasweb.github.io
+  - platform.migueleliasweb.github.io
   resources:
   - apps/status
   verbs:

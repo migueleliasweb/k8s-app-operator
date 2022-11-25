@@ -9,7 +9,7 @@ resources:
     namespaced: true
   controller: true
   domain: migueleliasweb.github.io
-  group: appgroup
+  group: platformv
   kind: App
   path: migueleliasweb.github.io/api/v1beta1
   version: v1beta1
