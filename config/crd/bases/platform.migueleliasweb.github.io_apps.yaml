@@ -37,18 +37,22 @@ spec:
             properties:
               base:
                 properties:
-                  env_vars:
+                  envvars:
                     additionalProperties:
                       type: string
                     type: object
                   image:
                     type: string
+                  labels:
+                    additionalProperties:
+                      type: string
+                    type: object
                   name:
                     type: string
                 type: object
               capacity:
                 properties:
-                  autoscale:
+                  autoscaling:
                     properties:
                       enabled:
                         type: boolean
@@ -59,11 +63,22 @@ spec:
                       target_memory_utilization_percentage:
                         type: integer
                     type: object
-                  evictionmaxunavailable:
+                  eviction_max_unavailable:
                     type: string
                   replicas:
                     type: integer
-                  rolloutmaxunavailable:
+                  resourcesspec:
+                    properties:
+                      limit_cpu:
+                        type: string
+                      limit_mem:
+                        type: string
+                      requests_cpu:
+                        type: string
+                      requests_mem:
+                        type: string
+                    type: object
+                  rollout_max_unavailable:
                     type: string
                 type: object
               identity:
@@ -71,6 +86,15 @@ spec:
                   aws:
                     properties:
                       iam_role:
+                        type: string
+                    type: object
+                  k8s:
+                    properties:
+                      rbac:
+                        description: 'TODO: How to nicely expose this without exposing
+                          the whole underlying Kind?'
+                        type: object
+                      service_account:
                         type: string
                     type: object
                 type: object

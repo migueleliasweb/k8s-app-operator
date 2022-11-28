@@ -7,10 +7,11 @@ package controllers
 import (
 	"context"
 
+	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -19,6 +20,8 @@ import (
 
 	platformv1beta1 "migueleliasweb.github.io/api/v1beta1"
 )
+
+const AppFinalizerName = "platform.migueleliasweb.github.io/finalizer"
 
 type SecondaryReconcilers interface {
 	ReconcileWithApp(
@@ -30,9 +33,57 @@ type SecondaryReconcilers interface {
 
 // AppReconciler reconciles a App object
 type AppReconciler struct {
-	Client               client.Client
+	client.Client
 	Scheme               *runtime.Scheme
+	Log                  *logr.Logger
 	SecondaryReconcilers []reconcile.Reconciler
+}
+
+// See: https://book.kubebuilder.io/reference/using-finalizers.html
+func (r *AppReconciler) handleFinalizer(
+	ctx context.Context,
+	req ctrl.Request,
+	app *platformv1beta1.App,
+) error {
+	// examine D	eletionTimestamp to determine if object is under deletion
+	if app.ObjectMeta.DeletionTimestamp.IsZero() {
+		// The object is not being deleted, so if it does not have our finalizer,
+		// then lets add the finalizer and update the object. This is equivalent
+		// registering our finalizer.
+		if !controllerutil.ContainsFinalizer(app, AppFinalizerName) {
+			controllerutil.AddFinalizer(app, AppFinalizerName)
+			if err := r.Update(ctx, app); err != nil {
+				return err
+			}
+		}
+	} else {
+		// The object is being deleted
+		if controllerutil.ContainsFinalizer(app, AppFinalizerName) {
+			// our finalizer is present, so lets handle any external dependency
+			if err := r.deleteExternalResources(app); err != nil {
+				// if fail to delete the external dependency here, return with error
+				// so that it can be retried
+				return err
+			}
+
+			// remove our finalizer from the list and update it.
+			controllerutil.RemoveFinalizer(app, AppFinalizerName)
+			if err := r.Update(ctx, app); err != nil {
+				return err
+			}
+		}
+
+		// Stop reconciliation as the item is being deleted
+		return nil
+	}
+
+	return nil
+}
+
+func (r *AppReconciler) deleteExternalResources(app *platformv1beta1.App) error {
+	// call all downstream reconcilers
+	// exit
+	return nil
 }
 
 //+kubebuilder:rbac:groups=platform.migueleliasweb.github.io,resources=apps,verbs=get;list;watch;create;update;patch;delete
@@ -45,9 +96,28 @@ type AppReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile
 func (r *AppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	log := r.Log.WithValues("app", req.NamespacedName)
 
-	// fetch current definition
+	var app *platformv1beta1.App
+	if err := r.Get(ctx, req.NamespacedName, app); err != nil {
+		log.Error(err, "unable to fetch CronJob")
+		// we'll ignore not-found errors, since they can't be fixed by an immediate
+		// requeue (we'll need to wait for a new notification), and we can get them
+		// on deleted requests.
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	if err := r.handleFinalizer(
+		ctx,
+		req,
+		app,
+	); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	// Your reconcile logic
+
+	// fetch current definitions
 	// set status to "reconciling"?
 	// call secondary reconcilers
 	// done
