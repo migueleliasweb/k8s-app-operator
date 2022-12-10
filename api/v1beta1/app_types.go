@@ -1,7 +1,3 @@
-/*
-Copyright 2022.
-*/
-
 package v1beta1
 
 import (
@@ -10,9 +6,9 @@ import (
 
 // AppSpec defines the desired state of App
 type AppSpec struct {
-	Base     BaseSpec     `json:"base,omitempty"`
-	Capacity CapacitySpec `json:"capacity,omitempty"`
-	Identity IdentitySpec `json:"identity,omitempty"`
+	Core CoreSpec `json:"base,omitempty"`
+	// Capacity CapacitySpec `json:"capacity,omitempty"`
+	// Identity IdentitySpec `json:"identity,omitempty"`
 }
 
 // AppStatus defines the observed state of App

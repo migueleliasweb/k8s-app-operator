@@ -1,7 +1,3 @@
-/*
-Copyright 2022.
-*/
-
 // Package v1beta1 contains API Schema definitions for the platform v1beta1 API group
 // +kubebuilder:object:generate=true
 // +groupName=platform.migueleliasweb.github.io
